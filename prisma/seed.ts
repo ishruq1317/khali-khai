@@ -6,6 +6,13 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("Seeding Khali Khai platform across all of Bangladesh...");
 
+  // If database already contains restaurants, preserve data and skip
+  const existingCount = await prisma.restaurant.count().catch(() => 0);
+  if (existingCount > 0) {
+    console.log(`Database already has ${existingCount} restaurants. Preserving live data and skipping seed.`);
+    return;
+  }
+
   const salt = await bcrypt.genSalt(10);
   const defaultPasswordHash = await bcrypt.hash("KhaliKhai@2026", salt);
 
